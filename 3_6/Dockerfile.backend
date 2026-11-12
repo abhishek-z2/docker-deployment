@@ -1,0 +1,22 @@
+
+FROM golang:1.16
+
+WORKDIR /app
+
+COPY code/example-backend .
+
+ENV PORT=8080
+ENV REQUEST_ORIGIN=http://localhost:5001
+
+RUN go build \
+    && rm -rf /root/.cache/go-build /go/pkg/mod \
+    && find . -mindepth 1 -maxdepth 1 ! -name server -exec rm -rf {} + \
+    && useradd -m appuser \
+    && chown appuser:appuser server
+
+USER appuser
+
+EXPOSE 8080
+
+CMD ["./server"]
+
