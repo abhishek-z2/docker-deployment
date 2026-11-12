@@ -1,0 +1,28 @@
+FROM node:16-bullseye
+
+WORKDIR /mydir
+
+RUN npm install -g serve
+
+RUN useradd -m appuser
+
+RUN chown appuser .
+
+USER appuser
+
+COPY code/example-frontend/package*.json .
+
+RUN npm install
+
+COPY code/example-frontend .
+
+ENV REACT_APP_BACKEND_URL=http://localhost:8080
+
+RUN npm run build 
+
+
+EXPOSE 5001
+
+CMD ["serve","-s","-l","5001","build"]
+
+
